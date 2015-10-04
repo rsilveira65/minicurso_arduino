@@ -1,23 +1,23 @@
 
-int MOTOR_1 = 10;
-int MOTOR_2 = 7;
-int BUZZER=2;
-int VCC=3;
-char c;
+/* 
+  PROJETO FINAL 2:
+  AUTOR: Rafael Silveira
+*/
 // variáveis
+
+int MOTOR = 10;  //pino para ligacao no CH1 do rele
+int BUZZER = 2;     //ligacao no positivo do buzzer
+char c;
 int gatilho = 9; // pino TRIG do sensor ultrassônico
 int echo = 8; // pino ECHO do sensor ultrassônico
 float tempo; // para armazenar o tempo de ida e volta do sinal em microsegundos
 float distancia_cm; // para armazenar a distância em centímetros
-int TEMPO_SEG= 10;
-int DISTANCIA = 30; //distancia em cm
-
-void setup() {                
+int DISTANCIA = 30; //distancia em cm minima de um obstaculo
+int TEMPO_SEG = 10; //tempo inicial para comecar
+void setup() {
+  
   Serial.begin(9600);
-  pinMode(VCC,INPUT);
-  digitalWrite(VCC,HIGH);
-  pinMode(MOTOR_1, OUTPUT);
-  pinMode(MOTOR_2, OUTPUT); 
+  pinMode(MOTOR, OUTPUT);
   pinMode(BUZZER, OUTPUT); 
   pinMode(gatilho,OUTPUT);
   digitalWrite(gatilho,LOW);
@@ -27,7 +27,7 @@ void setup() {
 
 
 void loop() {
-  int despertador = contador(TEMPO_SEG);
+  int despertador = contador(TEMPO_SEG);  //contador para comecar apos X segundos
   if (despertador ==1){
   
       while (true){
@@ -35,21 +35,21 @@ void loop() {
         int resp_sensor = ultrassonico();
         
         if (resp_sensor< DISTANCIA){
-              digitalWrite(MOTOR_1,LOW);
+              digitalWrite(MOTOR,LOW);
+              beep(1);
+              delay(1000);
+              beep(0);
               
         }else{
-          digitalWrite(MOTOR_1,HIGH);
+          digitalWrite(MOTOR,HIGH);
           
-        
-    
-  }
+        }
 
-}
-}
+    }
+  }
 }
 
  
-// laço principal (executado indefinidamente)
 int ultrassonico() {
  // disparar pulso ultrassônico
  digitalWrite(gatilho, HIGH);
@@ -59,21 +59,18 @@ int ultrassonico() {
  // medir tempo de ida e volta do pulso ultrassônico
  tempo = pulseIn(echo, HIGH);
  
- // calcular as distâncias em centímetros e polegadas
+ // calcular as distâncias em centímetros
  distancia_cm = tempo / 29.4 / 2;
  
- // apresentar resultados no display LCD
-
  Serial.print("Distancia: ");
  Serial.print(distancia_cm);
  Serial.println(" cm");
 
- 
- // aguardar um pouquinho antes de começar tudo de novo
  return distancia_cm;
 }
 
 int contador(int tempo){
+  
   Serial.println(tempo);
   while (tempo != 0){
     Serial.println(tempo);
@@ -93,8 +90,7 @@ void beep(int liga){
     digitalWrite(BUZZER,LOW);
     Serial.println(":x");
   }
-  
-  
+    
 }
 
 
